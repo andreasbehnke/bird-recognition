@@ -7,11 +7,9 @@ pictureViewer = "eog -w"
 imageDirectory = sys.argv[1]
 labelsFileName = imageDirectory + "labels.csv"
 
-# - continue on keyboard input
 # - load available tag - key mapping
 # - display tag - key mapping
 # - add new line to cvs on key entry
-# - make sure csv is saved after each step
 
 # read labels from csv files
 # create empty file if not exists
@@ -32,13 +30,16 @@ termios.tcsetattr(fd, termios.TCSANOW, newattr)
 try:
     for root, dirs, files in os.walk(imageDirectory):
         for f in files:
-            if ((f.endswith("jpg") or f.endswith("jpeg")) and (csvData.find(f) == -1)):
-                image = root +  "/" + f
-                print image
-                os.system(pictureViewer + " " + image + " &")
-                c = sys.stdin.read(1)
-                print "Got character", repr(c)
-                with open(labelsFileName, 'a') as labels:
-                    labels.write(c + "," + image)
+            if (f.endswith("jpg") or f.endswith("jpeg")):
+                if (csvData.find(f) != -1):
+                    print "skipping tagged image " + f
+                else:
+                    image = root +  "/" + f
+                    print image
+                    os.system(pictureViewer + " " + image + " &")
+                    c = sys.stdin.read(1)
+                    print "Got character", repr(c)
+                    with open(labelsFileName, 'a') as labels:
+                        labels.write(c + "," + image)
 finally:
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
