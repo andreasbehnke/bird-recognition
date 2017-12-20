@@ -1,16 +1,25 @@
-import termios, fcntl, sys, os
+import termios
+import fcntl
+import sys
+import os
 
 pictureViewer = "eog -w"
 imageDirectory = sys.argv[1]
+labelsFileName = imageDirectory + "labels.csv"
 
-# - support command line argument for tag-key-mapping files
 # - continue on keyboard input
-# - load cvs file if exists
 # - load available tag - key mapping
 # - display tag - key mapping
 # - add new line to cvs on key entry
-# - skip existing tagged files
 # - make sure csv is saved after each step
+
+# read labels from csv files
+# create empty file if not exists
+open(labelsFileName, 'a').close()
+# read existing csv data to string for searching for existing files
+csvData = ""
+with open(labelsFileName, 'r') as labelsFile:
+    csvData = labelsFile.read()
 
 # Prepare terminal for single character input
 fd = sys.stdin.fileno()
@@ -23,7 +32,7 @@ termios.tcsetattr(fd, termios.TCSANOW, newattr)
 try:
     for root, dirs, files in os.walk(imageDirectory):
         for f in files:
-            if (f.endswith("jpg") | f.endswith("jpeg")):
+            if ((f.endswith("jpg") or f.endswith("jpeg")) and (csvData.find(f) == -1)):
                 image = root +  "/" + f
                 print image
                 os.system(pictureViewer + " " + image + " &")
