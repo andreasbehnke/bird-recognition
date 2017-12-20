@@ -38,5 +38,7 @@ try:
                 os.system(pictureViewer + " " + image + " &")
                 c = sys.stdin.read(1)
                 print "Got character", repr(c)
+                with open(labelsFileName, 'a') as labels:
+                    labels.write(c + "," + image)
 finally:
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
