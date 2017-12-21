@@ -48,7 +48,7 @@ try:
                     imageRel = image[len(imageDirectory):]
                     print "***************************************"
                     print imageRel
-                    os.system(pictureViewer + " " + image + " &")
+                    os.system(pictureViewer + " " + image + " 2>/dev/null &")
 
                     # display available labels
                     print "choose one of the following labels for this image or press RETURN for no label:"
