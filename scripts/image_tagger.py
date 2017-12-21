@@ -11,6 +11,7 @@ tagMapFileName = imageDirectory + "tagmap.csv"
 
 # - display tag - key mapping
 # - add new line to cvs on key entry
+# - use relative path to file, not absolute!
 
 # read tagmap file
 tags = {}
@@ -49,6 +50,11 @@ try:
                     image = root +  "/" + f
                     print image
                     os.system(pictureViewer + " " + image + " &")
+
+                    # display available labelsFile
+                    print "choose one of the following labels for this image or press RETURN for no label:"
+                    for k in tags:
+                        print k + " - " + tags[k]
                     c = sys.stdin.read(1)
                     print "Got character", repr(c)
                     with open(labelsFileName, 'a') as labels:
