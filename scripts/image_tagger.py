@@ -9,8 +9,6 @@ imageDirectory = sys.argv[1]
 labelsFileName = imageDirectory + "labels.csv"
 tagMapFileName = imageDirectory + "tagmap.csv"
 
-# - display tag - key mapping
-# - add new line to cvs on key entry
 # - use relative path to file, not absolute!
 
 # read tagmap file
@@ -51,13 +49,24 @@ try:
                     print image
                     os.system(pictureViewer + " " + image + " &")
 
-                    # display available labelsFile
+                    # display available labels
                     print "choose one of the following labels for this image or press RETURN for no label:"
                     for k in tags:
                         print k + " - " + tags[k]
-                    c = sys.stdin.read(1)
-                    print "Got character", repr(c)
+
+                    validInput = ''
+                    while (not validInput):
+                        c = sys.stdin.read(1)
+                        if (c == '\n'):
+                            validInput = ' '
+                        if (c in tags.keys()) :
+                            validInput = c;
+                    label = ''
+                    if (validInput != ' '):
+                        label = tags[validInput]
+
+                    print "got selection:", label
                     with open(labelsFileName, 'a') as labels:
-                        labels.write(c + "," + image + "\n")
+                        labels.write(label.strip() + "," + image + "\n")
 finally:
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
