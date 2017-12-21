@@ -1,19 +1,31 @@
 import termios
-import fcntl
 import sys
 import os
+import shutil
+import time
 
 pictureViewer = "eog -w"
 imageDirectory = sys.argv[1]
 labelsFileName = imageDirectory + "labels.csv"
+tagMapFileName = imageDirectory + "tagmap.csv"
 
-# - load available tag - key mapping
 # - display tag - key mapping
 # - add new line to cvs on key entry
+
+# read tagmap file
+tags = {}
+with open(tagMapFileName, 'r') as tagMapFile:
+    line = tagMapFile.readline()
+    while line:
+        keyLabel = line.split(':')
+        tags[keyLabel[0].strip()] = keyLabel[1].strip()
+        line = tagMapFile.readline()
 
 # read labels from csv files
 # create empty file if not exists
 open(labelsFileName, 'a').close()
+# make a backup
+shutil.copyfile(labelsFileName, labelsFileName + "." + str(time.time()) + ".bak")
 # read existing csv data to string for searching for existing files
 csvData = ""
 with open(labelsFileName, 'r') as labelsFile:
@@ -40,6 +52,6 @@ try:
                     c = sys.stdin.read(1)
                     print "Got character", repr(c)
                     with open(labelsFileName, 'a') as labels:
-                        labels.write(c + "," + image)
+                        labels.write(c + "," + image + "\n")
 finally:
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
