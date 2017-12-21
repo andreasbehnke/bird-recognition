@@ -9,8 +9,6 @@ imageDirectory = sys.argv[1]
 labelsFileName = imageDirectory + "labels.csv"
 tagMapFileName = imageDirectory + "tagmap.csv"
 
-# - use relative path to file, not absolute!
-
 # read tagmap file
 tags = {}
 with open(tagMapFileName, 'r') as tagMapFile:
@@ -45,8 +43,11 @@ try:
                 if (csvData.find(f) != -1):
                     print "skipping tagged image " + f
                 else:
+                    # print out image path
                     image = root +  "/" + f
-                    print image
+                    imageRel = image[len(imageDirectory):]
+                    print "***************************************"
+                    print imageRel
                     os.system(pictureViewer + " " + image + " &")
 
                     # display available labels
@@ -54,6 +55,7 @@ try:
                     for k in tags:
                         print k + " - " + tags[k]
 
+                    # wait for user selection
                     validInput = ''
                     while (not validInput):
                         c = sys.stdin.read(1)
@@ -65,8 +67,9 @@ try:
                     if (validInput != ' '):
                         label = tags[validInput]
 
+                    # write label and relative image path to csv file
                     print "got selection:", label
                     with open(labelsFileName, 'a') as labels:
-                        labels.write(label.strip() + "," + image + "\n")
+                        labels.write(label.strip() + "," + imageRel + "\n")
 finally:
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
