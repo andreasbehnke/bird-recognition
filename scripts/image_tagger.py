@@ -36,10 +36,12 @@ newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
 termios.tcsetattr(fd, termios.TCSANOW, newattr)
 
 # iterate over all images found in imageDirectory
+count = 0;
 try:
     for root, dirs, files in os.walk(imageDirectory):
         for f in files:
             if (f.endswith("jpg") or f.endswith("jpeg")):
+                count += 1
                 if (csvData.find(f) != -1):
                     print "skipping tagged image " + f
                 else:
@@ -47,6 +49,7 @@ try:
                     image = root +  "/" + f
                     imageRel = image[len(imageDirectory):]
                     print "***************************************"
+                    print "Image #", count
                     print imageRel
                     os.system(pictureViewer + " " + image + " 2>/dev/null &")
 
